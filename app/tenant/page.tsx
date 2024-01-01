@@ -17,16 +17,13 @@ import { cookies } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
 import AuthButton from "@/components/AuthButton";
 
-const cookieStore = cookies();
-const supabase = createClient(cookieStore);
-
-async function getVisitors(id: string | undefined): Promise<Visitor[] | null> {
-  const { data, error } = await supabase.rpc('get_tenant_visitors', {tenant_id: id}).select("*");
-  return data;
-}
-
 export default async function AnnouncementPage() {
-  
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore); 
+  const getVisitors = async (id: string | undefined): Promise<Visitor[] | null>  => {
+    const { data, error } = await supabase.rpc('get_tenant_visitors', {tenant_id: id}).select("*");
+    return data;
+  }
   let { data: {session} } = await supabase.auth.getSession();
   let { data, error } = await supabase.from("announcement").select("*");
   let announcements = data;
